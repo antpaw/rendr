@@ -28,7 +28,11 @@ BaseCollection = Super.extend({
      * Store a reference to the app instance.
      */
     this.app = this.options.app;
-
+    apiPathOrUrl = this.app.attributes.apiPath;
+    
+    if (this.url && this.app.attributes.apiPath && ~apiPathOrUrl.indexOf('://')) {
+      this.url = apiPathOrUrl + this.url;
+    }
     /**
      * Store a reference to the params that were used to
      * query for these models.

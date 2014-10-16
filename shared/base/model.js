@@ -19,6 +19,11 @@ var BaseModel = Backbone.Model.extend({
     if (!this.app && this.options.collection) {
       this.app = this.options.collection.app;
     }
+    apiPathOrUrl = this.app.attributes.apiPath;
+    
+    if (this.url && this.app.attributes.apiPath && ~apiPathOrUrl.indexOf('://')) {
+      this.url = apiPathOrUrl + this.url;
+    }
 
     Backbone.Model.apply(this, arguments);
 
