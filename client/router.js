@@ -92,12 +92,12 @@ ClientRouter.prototype.addBackboneRoute = function(routeObj) {
   this._router.route(pattern, name, handler);
 };
 
-ClientRouter.prototype.getHandler = function(action, pattern, route) {
+ClientRouter.prototype.getHandler = function(action, pattern, route, controller) {
   var router = this;
 
   // abstract action call
-  function actionCall(action, params) {
-    action.call(router, params, router.getRenderCallback(route));
+  function actionCall(action, params, controller) {
+    action.call(router, params, router.getRenderCallback(route), controller);
   }
 
   // This returns a function which is called by Backbone.history.
@@ -135,10 +135,10 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
             if (typeof controller[route.action] != 'function') {
               throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
             }
-            actionCall(controller[route.action], params);
+            actionCall(controller[route.action], params, controller);
           });
         } else {
-          actionCall(action, params);
+          actionCall(action, params, controller);
         }
       }
     }

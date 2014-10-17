@@ -98,6 +98,20 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
     return action;
   },
 
+  getController: function(route) {
+    var controller;
+
+    if (route.controller) {
+      if (isAMDEnvironment) {
+        controller = route.controller;
+      } else {
+        controller = this.loadController(route.controller);
+      }
+    }
+
+    return controller;
+  },
+
   getRedirect: function(route, params) {
     var redirect = route.redirect;
 
@@ -153,11 +167,12 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
    * Adds a single route definition.
    */
   route: function(pattern) {
-    var realAction, action, definitions, handler, route, routeObj;
+    var realAction, controller, action, definitions, handler, route, routeObj;
 
     definitions = _.toArray(arguments).slice(1);
     route = parseRouteDefinitions(definitions);
     realAction = this.getAction(route);
+    controller = this.getController(route);
     if (isServer) {
       action = realAction;
     } else {
@@ -169,7 +184,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
             callback.apply(this, arguments);
           }
         }
-        realAction.call(this, params, next);
+        realAction.call(this, params, next, controller);
       }
     }
 
@@ -177,7 +192,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
       pattern = "/" + pattern;
     }
 
-    handler = this.getHandler(action, pattern, route);
+    handler = this.getHandler(action, pattern, route, controller);
     routeObj = [pattern, route, handler];
     this._routes.push(routeObj);
     this.trigger('route:add', routeObj);

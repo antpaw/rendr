@@ -56,7 +56,7 @@ ServerRouter.prototype.getParams = function(req) {
  * This is the method that renders the request. It returns an Express
  * middleware function.
  */
-ServerRouter.prototype.getHandler = function(action, pattern, route) {
+ServerRouter.prototype.getHandler = function(action, pattern, route, controller) {
   var router = this;
 
   return function(req, res, next) {
@@ -105,7 +105,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
         res.set(router.getHeadersForRoute(route));
         res.type('html').end(html);
       });
-    });
+    }, controller);
   };
 };
 
